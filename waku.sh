@@ -26,7 +26,7 @@ function check_logs {
 function update_node {
   echo "🔄 Updating Waku node..."
 
-  cd "$COMPOSE_DIR"
+  cd "$COMPOSE_DIR" || exit 1
 
   stop_node
 
@@ -67,10 +67,10 @@ function update_node {
   grep -q '^POSTGRES_SHM=' "$ENV_PATH" || echo 'POSTGRES_SHM=4g' >> "$ENV_PATH"
 
   # Update ports
-  sed -i 's/0\.0\.0\.0:3000:3000/0.0.0.0:3003:3000/g' "$COMPOSE_PATH"
+  sed -i 's/0\.0\.0\.0:3000:3000/0.0\.0\.0:3003:3000/g' "$COMPOSE_PATH"
   sed -i 's/8000:8000/8004:8000/g' "$COMPOSE_PATH"
   sed -i 's/80:80/81:80/g' "$COMPOSE_PATH"
-  sed -i 's/127.0.0.1:8003:8003/127.0.0.1:8005:8003/g' "$COMPOSE_PATH"
+  sed -i 's/127\.0\.0\.1:8003:8003/127.0.0.1:8005:8003/g' "$COMPOSE_PATH"
 
   # Register RLN and restart node
   bash "$COMPOSE_DIR/register_rln.sh"
@@ -85,11 +85,6 @@ function uninstall_node {
   stop_node
   rm -rf "$COMPOSE_DIR"
   echo "✅ Node removed, backup preserved in $BACKUP_DIR"
-}
-
-function exit_script {
-  echo "👋 Exiting. Bye!"
-  exit 0
 }
 
 # Menu loop
@@ -110,7 +105,7 @@ while true; do
       3) check_logs ;;
       4) update_node ;;
       5) uninstall_node ;;
-      6) exit_script ;;
+      6) echo "👋 Exiting. Bye!"; exit 0 ;;
       *) echo "❌ Invalid option";;
     esac
 
