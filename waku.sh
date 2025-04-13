@@ -89,6 +89,7 @@ function uninstall_node {
 
 function exit_script {
   echo "👋 Exiting. Bye!"
+  break 2
 }
 
 # Menu loop
